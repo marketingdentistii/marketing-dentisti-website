@@ -21,7 +21,7 @@ export default function GratiaContentInner({ sessionId }: { sessionId?: string }
       {/* Download PDF Button */}
       <div className="text-center mb-12">
         <a
-          href="/api/pdf/kit-base.pdf"
+          href="/api/pdf/kit-base"
           download
           className="inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-xl transition-colors shadow-lg"
         >
