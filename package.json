@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "preinstall": "npm config set legacy-peer-deps true",
     "cf:build": "next build && npx @cloudflare/next-on-pages",
     "start": "next start"
   },
