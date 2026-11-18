@@ -1,0 +1,142 @@
+{
+  "name": "Kit Gratis — Follow-up",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expressionType": "cron",
+              "cronExpression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "id": "b1b2c3d4-0001-4000-8000-000000000001",
+      "name": "Ogni giorno alle 9",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-420, 300]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "SELEZIONA_IL_TUO_FOGLIO"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Sheet1"
+        },
+        "options": {}
+      },
+      "id": "b1b2c3d4-0001-4000-8000-000000000002",
+      "name": "Leggi lead dal foglio",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [-200, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.Timestamp }}",
+              "rightValue": "={{ $now.minus(4, 'days').toISO() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            },
+            {
+              "id": "c2",
+              "leftValue": "={{ $json.Timestamp }}",
+              "rightValue": "={{ $now.minus(3, 'days').toISO() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "before"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b1b2c3d4-0001-4000-8000-000000000003",
+      "name": "Solo lead di 3-4 giorni fa",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [20, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "marketingdentisti.it@gmail.com",
+        "toEmail": "={{ $('Leggi lead dal foglio').item.json.Email }}",
+        "subject": "Hai avuto modo di provare i 7 template?",
+        "emailFormat": "text",
+        "text": "Ciao {{ $('Leggi lead dal foglio').item.json.Nome }},\n\npochi giorni fa ti abbiamo inviato il Kit Gratis.\n\nLa domanda pratica è una sola: la segreteria sta già usando Script e Sequenza WhatsApp, o sono rimasti \"da guardare quando avrò tempo\"? Fa parte del gioco, ma se il problema è il tempo, è esattamente quello che risolve Avvio Studio:\n\n1. Template del Kit personalizzati sul tono di voce del tuo studio\n2. Setup WhatsApp Business (risposte rapide, etichette, messaggio di benvenuto)\n3. Automazione email: benvenuto + richiesta recensione\n4. Sistema reminder pre-appuntamento (WhatsApp o SMS, a tua scelta)\n5. Formazione segreteria: 1 ora, registrata e consegnata in video\n6. Ottimizzazione scheda Google Business\n\nSe ti interessa capire come funzionerebbe nel tuo studio, prenota una call gratuita di 20 minuti: https://cal.com/marketing-dentisti/avvio-studio\n\nSe invece preferisci aspettare, nessun problema: i template restano tuoi.\n\nMarketing dentisti\n\n---\nRicevi questa email perché hai richiesto il Kit sul nostro sito marketing-dentisti.it. Se non vuoi più ricevere i nostri contenuti, rispondi \"cancellami\" o scrivi a marketingdentisti.it@gmail.com.",
+        "options": {}
+      },
+      "id": "b1b2c3d4-0001-4000-8000-000000000004",
+      "name": "Invia follow-up",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [240, 300]
+    }
+  ],
+  "connections": {
+    "Ogni giorno alle 9": {
+      "main": [
+        [
+          {
+            "node": "Leggi lead dal foglio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leggi lead dal foglio": {
+      "main": [
+        [
+          {
+            "node": "Solo lead di 3-4 giorni fa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Solo lead di 3-4 giorni fa": {
+      "main": [
+        [
+          {
+            "node": "Invia follow-up",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

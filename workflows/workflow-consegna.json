@@ -1,0 +1,170 @@
+{
+  "name": "Kit Gratis — Consegna",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-kit-consegna",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "name": "Webhook Lead",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-420, 300],
+      "webhookId": "lead-kit-consegna"
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignmentData": [
+            {
+              "id": "f1",
+              "name": "Timestamp",
+              "value": "={{ $json.body.timestamp }}",
+              "type": "string"
+            },
+            {
+              "id": "f2",
+              "name": "Nome",
+              "value": "={{ $json.body.nome.trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "f3",
+              "name": "Email",
+              "value": "={{ $json.body.email.toLowerCase().trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "f4",
+              "name": "NomeStudio",
+              "value": "={{ ($json.body.nomeStudio || '').trim() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000002",
+      "name": "Normalizza dati",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-200, 300]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "SELEZIONA_IL_TUO_FOGLIO"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000003",
+      "name": "Salva su Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [20, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "marketingdentisti.it@gmail.com",
+        "toEmail": "={{ $('Normalizza dati').item.json.Email }}",
+        "subject": "Kit Gratis — i tuoi 7 template sono qui",
+        "emailFormat": "text",
+        "text": "Ciao {{ $('Normalizza dati').item.json.Nome }},\n\necco il Kit Gratis: 7 template pronti per strutturare il percorso del nuovo paziente nel tuo studio.\n\nScarica il PDF: https://marketing-dentisti.it/kit-gratis.pdf\n\nCosa trovi dentro:\n- Script segreteria — prima chiamata: accoglienza, qualifica, appuntamento\n- Sequenza WhatsApp — conferma, reminder, follow-up, con note su consenso e privacy\n- Email di benvenuto — il primo contatto dopo la visita\n- Checklist segreteria — dall'arrivo in studio alle 24 ore dopo\n- Email richiesta recensione — semplice e conforme alle policy di Google\n- SMS reminder — brevi e chiari per ridurre le mancate presentazioni\n- Mini-guida 5 step — il percorso completo del nuovo paziente in una pagina\n\nUn consiglio: inizia dalla Checklist segreteria e dalla Sequenza WhatsApp. Sono i due pezzi che incidono subito sull'esperienza del primo contatto.\n\nSe hai domande, rispondi a questa email: la legge una persona.\n\nMarketing dentisti\n\n---\nRicevi questa email perché hai richiesto il Kit sul nostro sito marketing-dentisti.it. Se non vuoi più ricevere i nostri contenuti, rispondi \"cancellami\" o scrivi a marketingdentisti.it@gmail.com.",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000004",
+      "name": "Invia Kit via Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"ok\": true } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000005",
+      "name": "Risposta OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [460, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Lead": {
+      "main": [
+        [
+          {
+            "node": "Normalizza dati",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizza dati": {
+      "main": [
+        [
+          {
+            "node": "Salva su Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salva su Google Sheet": {
+      "main": [
+        [
+          {
+            "node": "Invia Kit via Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Invia Kit via Email": {
+      "main": [
+        [
+          {
+            "node": "Risposta OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}
