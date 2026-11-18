@@ -6,14 +6,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const email = body?.email;
-
-    if (!email) {
-      return NextResponse.json(
-        { error: 'Inserisci la tua email per procedere.' },
-        { status: 400 }
-      );
-    }
+    // Email opzionale — se non fornita, Stripe la chiede al checkout
+    const email = body?.email || undefined;
 
     const origin = request.headers.get('origin') || 'https://marketing-dentisti.it';
 

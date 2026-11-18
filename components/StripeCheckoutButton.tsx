@@ -11,23 +11,18 @@ export default function StripeCheckoutButton() {
     setError(null);
 
     try {
-      const email = prompt('Inserisci la tua email per ricevere il Kit:');
-      if (!email || !email.includes('@')) {
-        setError('Email non valida. Riprova.');
-        setLoading(false);
-        return;
-      }
-
+      // Richiesta diretta a Stripe — nessuna email richiesta qui
+      // Stripe raccoglie l'email al checkout prima di chiedere il pagamento
       const res = await fetch('/api/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({}),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'Errore al caricare il checkout');
+        setError(data.error || 'Errore nel caricamento del checkout');
         setLoading(false);
         return;
       }
