@@ -11,8 +11,8 @@ export default function StripeCheckoutButton() {
     setError(null);
 
     try {
-      // Richiesta diretta a Stripe — nessuna email richiesta qui
-      // Stripe raccoglie l'email al checkout prima di chiedere il pagamento
+      // Redirect diretto a Stripe Checkout
+      // L'email viene richiesta da Stripe durante il pagamento (niente prompt qui)
       const res = await fetch('/api/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -50,14 +50,14 @@ export default function StripeCheckoutButton() {
             Caricamento...
           </span>
         ) : (
-          'Acquista il Kit Base — €37 con LANCIO37'
+          'Acquista ora con Sconto Lancio — €37'
         )}
       </button>
       {error && (
         <p className="text-red-500 text-sm mt-2 text-center">{error}</p>
       )}
       <p className="text-slate-500 text-xs text-center mt-2">
-        Pagamento sicuro con carta · Codice LANCIO37 applicabile al checkout
+        Pagamento sicuro · Il prezzo finale include l&apos;sconto LANCIO37
       </p>
     </div>
   );
