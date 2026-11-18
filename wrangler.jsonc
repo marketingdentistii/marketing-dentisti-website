@@ -1,0 +1,16 @@
+{
+  "name": "marketing-dentisti",
+  "compatibility_date": "2024-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "pages": {
+    "optimizer": {
+      "ssr": false
+    }
+  },
+  "routes": [],
+  "vars": {
+    "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "",
+    "STRIPE_SECRET_KEY": "",
+    "N8N_WEBHOOK_URL": ""
+  }
+}

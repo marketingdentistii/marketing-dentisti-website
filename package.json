@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && npx @cloudflare/next-on-pages",
     "start": "next start"
   },
   "dependencies": {
@@ -16,6 +16,7 @@
     "stripe": "^23.1.0"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.16",
     "@tailwindcss/turbopack": "4.3.3",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -25,5 +26,8 @@
     "netlify-cli": "^27.20.0",
     "tailwindcss": "4.3.3",
     "typescript": "^5"
+  },
+  "allowScripts": {
+    "workerd@1.20250718.0": true
   }
 }

@@ -9,6 +9,10 @@ export const metadata = {
   robots: 'noindex,nofollow',
 };
 
+// Forza generazione statica: il build di Next.js legge il file una sola volta,
+// il risultato viene incluso nell'HTML statico — zero dipendenze runtime da FS.
+export const dynamic = 'force-static';
+
 // La fonte canonica dei contenuti e' docs/kit-content.md: niente copia-incolla qui.
 const SOURCE = path.join(process.cwd(), 'docs', 'kit-content.md');
 const RAW = fs.readFileSync(SOURCE, 'utf8');
