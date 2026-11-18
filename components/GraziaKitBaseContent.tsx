@@ -1,8 +1,6 @@
 import Link from 'next/link';
 
 export default function GratiaContentInner({ sessionId }: { sessionId?: string }) {
-  const emailRef = sessionId ? 'la tua casella di posta' : 'la tua email';
-
   return (
     <div className="max-w-4xl mx-auto px-4 py-16 md:py-24">
       {/* Check Icon */}
@@ -23,7 +21,7 @@ export default function GratiaContentInner({ sessionId }: { sessionId?: string }
       {/* Download PDF Button */}
       <div className="text-center mb-12">
         <a
-          href="/pdf/kit-base.pdf"
+          href="/api/pdf/kit-base.pdf"
           download
           className="inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-xl transition-colors shadow-lg"
         >
@@ -75,24 +73,23 @@ export default function GratiaContentInner({ sessionId }: { sessionId?: string }
           rel="noopener noreferrer"
           className="inline-block bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
         >
-          Prenota una call gratuita di 20 min — {'€'}497 una tantum
+          Prenota una call gratuita di 20 min
         </a>
       </section>
 
       {/* Footer nav */}
       <div className="text-center pt-8 border-t border-slate-200">
         <Link href="/kit-gratis" className="text-slate-500 hover:text-slate-700 text-sm transition-colors">
-          ← Torna alla home
+          Torna alla home
         </Link>
       </div>
 
       {/* Footer legale */}
       <footer className="border-t border-slate-200 py-8 mt-auto">
         <div className="text-center text-slate-500 text-sm">
-          <p>{'© '}2026 Marketing dentisti ·{' '}
-            <Link href="/privacy" className="hover:text-slate-700">Privacy</Link> ·{' '}
-            <Link href="/termini" className="hover:text-slate-700">Termini</Link>
-          </p>
+          {'\u00A9'} 2026 Marketing dentisti ·{' '}
+          <Link href="/privacy" className="hover:text-slate-700">Privacy</Link> ·{' '}
+          <Link href="/termini" className="hover:text-slate-700">Termini</Link>
         </div>
       </footer>
     </div>
