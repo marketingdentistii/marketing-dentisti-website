@@ -1,0 +1,11 @@
+name = "marketing-dentisti"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Required for Cloudflare Pages: tell builder where static output goes
+pages_build_output_dir = ".vercel/output"
+
+[vars]
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY = ""
+STRIPE_SECRET_KEY = ""
+N8N_WEBHOOK_URL = ""
