@@ -2,7 +2,7 @@
 
 **Data:** 18 novembre 2026  
 **Branch di migrazione:** `migrate-cloudflare`  
-**Stato:** In corso — attendere configurazione Git Integration su Cloudflare dashboard
+**Stato:** Bloccato su Git Integration — richiede configurazione manuale Cloudflare Dashboard
 
 ---
 
@@ -78,8 +78,10 @@ Le URL di success/cancel nelle sessioni Stripe restano sul dominio `marketing-de
 ```jsonc
 {
   "scripts": {
-    "build": "next build",           // Build standard Next.js
-    "cf:build": "next build && npx @cloudflare/next-on-pages"  // Build + conversione Edge
+    "dev": "next dev",
+    "build": "next build",                    // Build standard Next.js
+    "cf:build": "next build && npx @cloudflare/next-on-pages",  // Build + conversione Edge
+    "start": "next start"
   },
   "devDependencies": {
     "@cloudflare/next-on-pages": "1.13.16"
@@ -113,14 +115,14 @@ Configurazione wrangler v4 per Pages Functions:
 
 ---
 
-## Record DNS Attuali
+## Record DNS Attesi
 
 | Tipo | Nome | Contenuto | Proxy | Note |
 |------|------|-----------|-------|------|
 | A | @ | `75.2.60.5` | enabled | Redirect a Cloudflare Pages IP |
 | CNAME | www | `marketing-dentisti.netlify.app` | enabled | Redirezione temporanea a Netlify |
 
-> ⚠️ **I record DNS non sono stati creati:** il token API utilizzato ha permessi limitati alle sole Pages Functions, senza accesso alla gestione DNS della zona. Crearli manualmente dal Cloudflare Dashboard.
+> ⚠️ **I record DNS non sono stati creati via API:** il token API utilizzato (`cfut_...`) ha permessi limitati alle sole Pages Functions, senza accesso alla gestione DNS della zona. Crearli manualmente dal Cloudflare Dashboard.
 
 ---
 
@@ -133,11 +135,7 @@ Dopo aver confermato che i nameserver di Register.it puntano a Cloudflare:
    - Aggiungere `marketing-dentisti.it`
    - Cloudflare crea SSL automaticamente
 
-2. **Configurare redirect www → primario:**
-   - Dashboard → Rules → Redirect Rules
-   - Regex match: `^www\.marketing-dentisti\.it` → `https://marketing-dentisti.it` (status 301)
-
-3. **Verifica completa live:**
+2. **Verifica completa live:**
    - `[ ] /` → redirect 307 a /kit-gratis
    - `[ ] /kit-gratis` → 200
    - `[ ] /grazie` → 200
@@ -150,40 +148,9 @@ Dopo aver confermato che i nameserver di Register.it puntano a Cloudflare:
    - `[ ] https://www.marketing-dentisti.it` → redirect a dominio primario
    - `[ ] Copy verifica FAQ kit-base: "Non devi fare nulla..." presente
 
-4. **Pulizia Netlify:**
+3. **Pulizia Netlify:**
    - Rimuovere dominio `marketing-dentisti.it` dal progetto Netlify
    - ⚠️ NON eliminare il progetto Netlify: attendere ok esplicito
-
----
-
-## Stato Attuale del Progetto Cloudflare
-
-- **ID Progetto:** `6b2ecab4-73ec-44a9-9c49-f5ca96c34e42`
-- **Subdomain:** `marketing-dentisti.pages.dev`
-- **Production Branch:** `main`
-- **Build Command:** `npm run cf:build`
-- **Framework:** nextjs
-- **Node Version:** 20
-- **Env Vars:** impostate a livello progetto ✅
-- **Git Integration:** ❌ DA CONFIGURARE manualmente (richiede OAuth tramite Cloudflare Dashboard per repo privato)
-
----
-
-## Passaggi Manuali Risalenti per l'Hub
-
-1. **Configurare Git Integration su Cloudflare Pages Dashboard:**
-   - Collegare il repository `marketingdentistii/marketing-dentisti-website`
-   - Branch di produzione: `main` (o `migrate-cloudflare`)
-   
-2. **Creare record DNS manualmente (la zona è `pending`):**
-   - **A @ → 75.2.60.5** (proxy ON/celeste)
-   - **CNAME www → marketing-dentisti.netlify.app** (proxy ON/celeste)
-
-3. **Dopo cutover DNS (nameserver Register.it → Cloudflare):**
-   - Aggiungere `marketing-dentisti.it` come custom domain su Pages
-   - Verificare SSL attivo (di solito alcuni minuti)
-   - Eseguire verifiche complete su `.it`
-   - Confermare quando tutto è operativo
 
 ---
 
@@ -195,3 +162,102 @@ Dopo aver confermato che i nameserver di Register.it puntano a Cloudflare:
 - ✅ Workflow n8n — intatti
 - ✅ Funnel gratuito — identico
 - ✅ Kit Base (comprese FAQ e contenuti) — invariati
+
+---
+
+## Stato Attuale del Progetto Cloudflare
+
+- **ID Progetto:** `3169f8dc-e704-48ed-b46b-644f4603e5ad`
+- **Subdomain:** `marketing-dentisti.pages.dev`
+- **Source Type:** `manual` (DA CAMBIARE in GitHub via dashboard)
+- **Production Branch:** `main`
+- **Env Vars:** POST PATCH restituisce 200 ma non visibili nel response GET (da verificare dopo primo deploy o da dashboard)
+- **Git Integration:** ❌ Bloccata — richiede Cloudflare GitHub App installata sull'org `marketingdentistii`
+
+### Cosa non è realizzabile via API
+
+| Azione | Motivo blocco | Soluzione |
+|--------|---------------|-----------|
+| Git Integration per repo privato | Richiede OAuth Cloudflare GitHub App | Dashboard → Installa Cloudflare Pages su GitHub org |
+| Record DNS | Token `cfut_...` senza scope DNS | Creare record manualmente da Cloudflare DNS zone |
+| Deploy automatico | Dipende da Git Integration | Una volta connesso GitHub, auto-deploy su push |
+| Env vars su deployment_config | Endpoint PATCH env_vars accetta solo livello progetto | Impostare manualmente dal dashboard Pages → Settings → Environment Variables |
+
+---
+
+## Passaggi Manuali da Eseguire (in ordine)
+
+### Fase 1 — Setup Infrastructure (PRIMA del cutover DNS)
+
+1. **Installare Cloudflare Pages GitHub App:**
+   - Dal Cloudflare Dashboard → Pages → Connect a repository
+   - Autorizzare l'app Cloudflare Pages nell'organizzazione `marketingdentistii` su GitHub
+   - Selezionare il repo `marketing-dentisti-website`
+
+2. **Collegare il progetto esistente al repo:**
+   - Dashboard → Pages → `marketing-dentisti` → Settings → Build & Deploy
+   - Cambiare Source da "Manual upload" a "GitHub"
+   - Selezionare `marketingdentistii/marketing-dentisti-website`
+   - Branch di produzione: `main`
+   - Salvare
+
+3. **Creare record DNS manualmente:**
+   - Dashboard → DNS → Records → Create Record
+   - **Tipo A:** Nome `@`, Content `75.2.60.5`, Proxy ON (celeste), TTL Auto
+   - **Tipo CNAME:** Name `www`, Target `marketing-dentisti.netlify.app`, Proxy ON (celeste), TTL Auto
+
+4. **Impostare env vars dal dashboard:**
+   - Pages → `marketing-dentisti` → Settings → Environment Variables
+   - Aggungere se mancano:
+     - `N8N_WEBHOOK_URL` = `https://marketingdentisti.app.n8n.cloud/webhook/lead-kit-consegna`
+     - `STRIPE_SECRET_KEY` = `(chiave test da .env.local)`
+     - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` = `(chiave test da .env.local)`
+
+5. **Verificare build config:**
+   - Settings → Build & Deploy → Framework preset → Select "Next.js"
+   - Build command: verificare che punti al build script corretto
+
+6. **Triggerare primo deployment manuale (se auto-deploy non parte):**
+   - Deployments → New Deployment
+   - Branch: `migrate-cloudflare` (o main dopo merge)
+   - Monitorare build logs
+
+### Fase 2 — Cutover DNS (dopo conferma Hub che nameserver Register.it sono passati)
+
+7. **Attendere propagation DNS (minuti):**
+   - Verificare: `dig marketing-dentisti.it A +short` → `75.2.60.5`
+   - Verificare HTTPS: `curl -v https://marketing-dentisti.it` → valid CF SSL cert
+
+8. **Aggiungere custom domain:**
+   - Pages → `marketing-dentisti` → Custom Domains → Add Domain
+   - Dominio: `marketing-dentisti.it`
+   - Cloudflare registra e configura SSL automaticamente
+   - Attendere SSL issuance (di solito < 5 min)
+
+9. **Eseguire verifiche complete LIVE su `.it`:**
+   - [ ] `GET /` → 307 redirect a `/kit-gratis`
+   - [ ] `GET /kit-gratis` → 200 OK, contiene "Kit Gratis"
+   - [ ] `GET /grazie` → 200 OK
+   - [ ] `GET /kit-base` → 200 OK
+   - [ ] `GET /grazie-kit-base` → 200 OK
+   - [ ] `GET /privacy` → 200 OK
+   - [ ] `GET /api/pdf/kit-base` → 200 OK, content-type application/pdf
+   - [ ] `POST /api/lead {"email":"test@test.it","nome":"Test","nomeStudio":"Test Studio"}` → 200 OK, verifica lead su n8n
+   - [ ] `POST /api/create-checkout {}` → 200 OK, response contiene URL checkout.stripe.com
+   - [ ] `https://www.marketing-dentisti.it` → redirect a `https://marketing-dentisti.it`
+   - [ ] Copy verifica: FAQ kit-base contiene "Non devi fare nulla..."
+
+10. **Verifica funnel Kit Base completo:**
+    - Click su "Acquista ora con Sconto Lancio €37" → redirect a Stripe → vede €37
+    - Completamento → redirect a /grazie-kit-base
+    - Download PDF → /api/pdf/kit-base → PDF valido
+
+11. **Confermare all'Hub il completamento:**
+    - Tutti gli endpoint verdi ✅
+    - Funnel funzionante con prezzo corretto
+    - SSL attivo e HTTP/2 disponibile
+
+12. **Pulizia Netlify:**
+    - Netlify Dashboard → Site settings → General → Domain management
+    - Rimuovere `marketing-dentisti.it`
+    - ⚠️ NON eliminare il progetto Netlify (attendere ok esplicito)
