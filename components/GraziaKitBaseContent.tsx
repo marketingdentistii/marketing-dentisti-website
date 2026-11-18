@@ -1,11 +1,7 @@
-'use client';
-
-import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function GratiaContentInner() {
-  const searchParams = useSearchParams();
-  const sessionId = searchParams.get('session_id') || null;
+export default function GratiaContentInner({ sessionId }: { sessionId?: string }) {
+  const emailRef = sessionId ? 'la tua casella di posta' : 'la tua email';
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-16 md:py-24">
@@ -27,7 +23,7 @@ export default function GratiaContentInner() {
       {/* Download PDF Button */}
       <div className="text-center mb-12">
         <a
-          href="/kit-base.pdf"
+          href="/pdf/kit-base.pdf"
           download
           className="inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-xl transition-colors shadow-lg"
         >
@@ -79,7 +75,7 @@ export default function GratiaContentInner() {
           rel="noopener noreferrer"
           className="inline-block bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
         >
-          Prenota una call gratuita di 20 min — €497 una tantum
+          Prenota una call gratuita di 20 min — {'€'}497 una tantum
         </a>
       </section>
 
@@ -93,7 +89,7 @@ export default function GratiaContentInner() {
       {/* Footer legale */}
       <footer className="border-t border-slate-200 py-8 mt-auto">
         <div className="text-center text-slate-500 text-sm">
-          <p>© 2026 Marketing dentisti ·{' '}
+          <p>{'© '}2026 Marketing dentisti ·{' '}
             <Link href="/privacy" className="hover:text-slate-700">Privacy</Link> ·{' '}
             <Link href="/termini" className="hover:text-slate-700">Termini</Link>
           </p>
