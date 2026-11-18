@@ -7,7 +7,6 @@ export const metadata: Metadata = {
   description: 'Template pronti per ogni contatto con il paziente. WhatsApp, email, reminder e recensioni. Lancio €37 con codice LANCIO37.',
 };
 
-// COPY PROVVISORIO: finalizzare dopo missione Kit Base
 export default function KitBasePage() {
   return (
     <main className="min-h-screen bg-slate-50 flex flex-col">
@@ -31,13 +30,13 @@ export default function KitBasePage() {
             e da usare da subito.
           </p>
 
-          {/* Banner Codice Sconto */}
+          {/* Banner Codice Sconto — già attivo */}
           <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-xl px-5 py-3 mb-8">
             <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
             </svg>
             <span className="text-blue-800 font-medium text-sm">
-              Codice sconto: <span className="font-bold tracking-wide">LANCIO37</span>
+              Sconto lancio: <span className="font-bold tracking-wide">LANCIO37</span> — già attivo per i primi 10 studi
             </span>
           </div>
 
@@ -60,11 +59,11 @@ export default function KitBasePage() {
 
           {/* Micro-trust */}
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-slate-400">
-            <span>Pagamento sicuro con carta</span>
+            <span>Pagamento sicuro</span>
+            <span>·</span>
+            <span>Sconto lancio già applicato</span>
             <span>·</span>
             <span>Consegna immediata via email</span>
-            <span>·</span>
-            <span>Assistenza via email inclusa</span>
           </div>
         </div>
       </section>
@@ -166,25 +165,28 @@ export default function KitBasePage() {
         </div>
       </section>
 
-      {/* ═══ Per chi è / Non è per ═══ */}
-      <section className="max-w-4xl mx-auto px-4 py-16 md:py-20">
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
-            <h3 className="font-bold text-emerald-900 text-lg mb-4">Per chi è</h3>
-            <ul className="space-y-3 text-sm text-slate-700">
-              <li className="flex gap-2"><span className="text-emerald-600 flex-shrink-0">✓</span> Studi odontoiatrici in attività da almeno 6 mesi</li>
-              <li className="flex gap-2"><span className="text-emerald-600 flex-shrink-0">✓</span> Segreteria che vuole standardizzare le comunicazioni</li>
-              <li className="flex gap-2"><span className="text-emerald-600 flex-shrink-0">✓</span> Chi cerca una base operativa solida, non soluzioni complesse</li>
-              <li className="flex gap-2"><span className="text-emerald-600 flex-shrink-0">✓</span> Dentisti che vogliono automatizzare senza imparare la tecnologia</li>
-            </ul>
-          </div>
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-6">
-            <h3 className="font-bold text-slate-900 text-lg mb-4">Non è per</h3>
-            <ul className="space-y-3 text-sm text-slate-600">
-              <li className="flex gap-2"><span className="text-slate-400 flex-shrink-0">×</span> Studi ancora in fase di planning/pre-apertura</li>
-              <li className="flex gap-2"><span className="text-slate-400 flex-shrink-0">×</span> Chi cerca software o strumenti digitali da installare</li>
-              <li className="flex gap-2"><span className="text-slate-400 flex-shrink-0">×</span> Chi vuole una gestione marketing completa (vedi Gestione Totale)</li>
-            </ul>
+      {/* ═══ Per chi è / Non è per — allineato a /kit-gratis ═══ */}
+      <section className="bg-slate-50">
+        <div className="max-w-4xl mx-auto px-4 py-16 md:py-20">
+          <h2 className="text-2xl md:text-3xl font-bold text-slate-900 text-center mb-10">
+            Per chi è
+          </h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-white p-6 rounded-lg border-l-4 border-emerald-500 shadow-sm">
+              <h3 className="text-xl font-bold text-emerald-700 mb-4">PER:</h3>
+              <ul className="space-y-2 text-slate-700">
+                <li>• studi odontoiatrici italiani</li>
+                <li>• studi con segreteria/front-office</li>
+                <li>• chi vuole sistematizzare il primo contatto</li>
+              </ul>
+            </div>
+            <div className="bg-white p-6 rounded-lg border-l-4 border-slate-400 shadow-sm">
+              <h3 className="text-xl font-bold text-slate-600 mb-4">NON PER:</h3>
+              <ul className="space-y-2 text-slate-600">
+                <li>• chi cerca risultati pronti senza applicare i template</li>
+                <li>• chi non ha un punto di contatto con i pazienti</li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
@@ -198,7 +200,7 @@ export default function KitBasePage() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { num: '1', title: 'Paghi con carta e codice LANCIO37', desc: '€37 invece di €97. Solo per i primi 10 studi.' },
+              { num: '1', title: 'Paghi con carta — lo sconto è già applicato', desc: 'Vedrai €37 al posto di €97. Solo per i primi 10 studi.' },
               { num: '2', title: "Ricevi subito l'email con il Kit", desc: "Tutti i template disponibili per il download immediato." },
               { num: '3', title: 'Personalizzi e usi', desc: 'Inserisci il nome del tuo studio e inizia a usarli da subito.' },
             ].map((step) => (
@@ -224,7 +226,7 @@ export default function KitBasePage() {
           {[
             {
               q: 'Come applico lo sconto con LANCIO37?',
-              a: 'Al checkout su Stripe inserisci il codice LANCIO37 nel campo coupon. Vedrai subito €37 al posto di €97.'
+              a: 'Non devi fare nulla: lo sconto lancio è già applicato al checkout. Vedrai €37 invece di €97 nel riepilogo di pagamento.'
             },
             {
               q: 'Come ricevo il Kit Base?',
@@ -232,11 +234,11 @@ export default function KitBasePage() {
             },
             {
               q: "Posso usare i template per più sedi?",
-              a: "La licenza è per uso interno di uno studio/dentaista. Se hai più sedi, contattaci per un'offerta dedicata."
+              a: "La licenza è per uso interno di uno studio/dentista. Se hai più sedi, contattaci per un'offerta dedicata."
             },
             {
               q: "C'è assistenza se ho problemi?",
-              a: 'Sì. Scrivi a marketingdentisti.it@gmail.com e ti rispondiamo entro 24 ore lavorative.'
+              a: 'Sì. Scrivi a marketingdentisti.it@gmail.com e ti rispondiamo al più presto.'
             },
           ].map((faq, i) => (
             <details key={i} className="group bg-white border border-slate-200 rounded-xl overflow-hidden">
@@ -262,13 +264,12 @@ export default function KitBasePage() {
           </h2>
           <p className="text-slate-300 max-w-xl mx-auto mb-8">
             €37 invece di €97. Offerta valida solo per i primi 10 studi.
-            Usa il codice <strong className="text-white">LANCIO37</strong> al checkout.
           </p>
           <div className="max-w-md mx-auto mb-4">
             <StripeCheckoutButton />
           </div>
           <p className="text-slate-400 text-xs">
-            Pagamento sicuro con carta · Codice LANCIO37 applicabile al checkout
+            Pagamento sicuro · Sconto lancio già applicato
           </p>
         </div>
       </section>

@@ -4,52 +4,38 @@ import Stripe from 'stripe';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 /**
- * Trova o crea il coupon LANCIO37 su Stripe.
- * Viene creato con amount_off 6000 centesimi (€60), massimo 10 utilizzi.
+ * Legge il coupon LANCIO37 esistente su Stripe.
+ * Se non viene trovato (esaurito o cancellato), restituisce null.
  */
-async function getOrCreateLancio37Coupon() {
+async function findLancio37Coupon(): Promise<{ id: string; maxRedemptions: number | null } | null> {
   const coupons = await stripe.coupons.list({ limit: 100 });
-  let coupon = coupons.data.find(
-    (c) => c.name === 'LANCIO37'
-  );
+  const found = coupons.data.find(c => c.name === 'LANCIO37');
 
-  if (!coupon) {
-    coupon = await stripe.coupons.create({
-      name: 'LANCIO37',
-      amount_off: 6000, // €60 in centesimi
-      currency: 'eur',
-      max_redemptions: 10,
-      duration: 'once',
-    });
-  }
+  if (!found) return null;
 
-  return coupon;
+  return {
+    id: found.id,
+    maxRedemptions: found.max_redemptions ?? null,
+  };
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    // Email opzionale — Stripe la chiede al checkout stesso
-    const email = body?.email || undefined;
-
     const origin = request.headers.get('origin') || 'https://marketing-dentisti.it';
 
-    // Cerca o crea il coupon LANCIO37 e applicalo alla sessione
-    const coupon = await getOrCreateLancio37Coupon();
+    // Legge il coupon esistente — se non esiste (esaurito) continua a prezzo pieno
+    const coupon = await findLancio37Coupon();
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      customer_email: email,
-      metadata: {
-        product_type: 'kit_base',
-      },
+      customer_email: undefined,          // nessuna email qui: Stripe la chiede al checkout
+      metadata: { product_type: 'kit_base' },
       line_items: [
-        {
-          price: 'price_1Ucuk61cfqUaCrbBkWsXmIx5',
-          quantity: 1,
-        },
+        { price: 'price_1Ucuk61cfqUaCrbBkWsXmIx5', quantity: 1 },
       ],
-      discounts: [{ coupon: coupon.id }],
+      // Lo sconto è già applicato automaticamente quando il coupon esiste.
+      // Se non esiste più (10 vendite finite), lo skippiamo e il checkout va a prezzo pieno.
+      discounts: coupon ? [{ coupon: coupon.id }] : [],
       billing_address_collection: 'auto',
       success_url: `${origin}/grazie-kit-base?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/kit-base`,
@@ -58,10 +44,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ url: session.url });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Errore durante la creazione del checkout';
-    return NextResponse.json(
-      { error: message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
