@@ -3,13 +3,39 @@ import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
+/**
+ * Trova o crea il coupon LANCIO37 su Stripe.
+ * Viene creato con amount_off 6000 centesimi (€60), massimo 10 utilizzi.
+ */
+async function getOrCreateLancio37Coupon() {
+  const coupons = await stripe.coupons.list({ limit: 100 });
+  let coupon = coupons.data.find(
+    (c) => c.name === 'LANCIO37'
+  );
+
+  if (!coupon) {
+    coupon = await stripe.coupons.create({
+      name: 'LANCIO37',
+      amount_off: 6000, // €60 in centesimi
+      currency: 'eur',
+      max_redemptions: 10,
+      duration: 'once',
+    });
+  }
+
+  return coupon;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    // Email opzionale — se non fornita, Stripe la chiede al checkout
+    // Email opzionale — Stripe la chiede al checkout stesso
     const email = body?.email || undefined;
 
     const origin = request.headers.get('origin') || 'https://marketing-dentisti.it';
+
+    // Cerca o crea il coupon LANCIO37 e applicalo alla sessione
+    const coupon = await getOrCreateLancio37Coupon();
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -23,7 +49,7 @@ export async function POST(request: NextRequest) {
           quantity: 1,
         },
       ],
-      allow_promotion_codes: true,
+      discounts: [{ coupon: coupon.id }],
       billing_address_collection: 'auto',
       success_url: `${origin}/grazie-kit-base?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/kit-base`,

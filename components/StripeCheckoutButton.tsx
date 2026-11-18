@@ -13,6 +13,7 @@ export default function StripeCheckoutButton() {
     try {
       // Redirect diretto a Stripe Checkout
       // L'email viene richiesta da Stripe durante il pagamento (niente prompt qui)
+      // Lo sconto LANCIO37 è già applicato automaticamente — il prezzo visualizzato su Stripe è €37
       const res = await fetch('/api/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -57,7 +58,7 @@ export default function StripeCheckoutButton() {
         <p className="text-red-500 text-sm mt-2 text-center">{error}</p>
       )}
       <p className="text-slate-500 text-xs text-center mt-2">
-        Pagamento sicuro · Il prezzo finale include l&apos;sconto LANCIO37
+        Pagamento sicuro · Sconto automatico al checkout
       </p>
     </div>
   );
