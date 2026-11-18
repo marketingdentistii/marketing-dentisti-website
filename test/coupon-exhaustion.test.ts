@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Test isolato per verificare il comportamento della logica
  * findLancio37Coupon rispetto al coupon esaurito.
