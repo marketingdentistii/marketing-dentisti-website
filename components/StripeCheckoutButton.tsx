@@ -2,13 +2,7 @@
 
 import { useState } from 'react';
 
-export default function StripeCheckoutButton({
-  name = '',
-  email = '',
-}: {
-  name?: string;
-  email?: string;
-}) {
+export default function StripeCheckoutButton() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -17,10 +11,17 @@ export default function StripeCheckoutButton({
     setError(null);
 
     try {
+      const email = prompt('Inserisci la tua email per ricevere il Kit:');
+      if (!email || !email.includes('@')) {
+        setError('Email non valida. Riprova.');
+        setLoading(false);
+        return;
+      }
+
       const res = await fetch('/api/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email }),
+        body: JSON.stringify({ email }),
       });
 
       const data = await res.json();
@@ -32,18 +33,18 @@ export default function StripeCheckoutButton({
       }
 
       window.location.href = data.url;
-    } catch (e) {
+    } catch {
       setError('Impossibile contattare il servizio di pagamento');
       setLoading(false);
     }
   };
 
   return (
-    <div>
+    <div className="max-w-md mx-auto">
       <button
         onClick={handleClick}
         disabled={loading}
-        className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-bold py-4 px-8 rounded-xl text-lg transition-colors shadow-lg"
+        className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed text-white font-bold py-4 px-8 rounded-xl text-lg transition-colors shadow-lg"
       >
         {loading ? (
           <span className="flex items-center justify-center gap-2">
@@ -54,14 +55,14 @@ export default function StripeCheckoutButton({
             Caricamento...
           </span>
         ) : (
-          'Acquista Kit Base — €97'
+          'Acquista il Kit Base — €37 con LANCIO37'
         )}
       </button>
       {error && (
         <p className="text-red-500 text-sm mt-2 text-center">{error}</p>
       )}
       <p className="text-slate-500 text-xs text-center mt-2">
-        Pagamento sicuro con carta • Sconto lancio automatico applicato
+        Pagamento sicuro con carta · Codice LANCIO37 applicabile al checkout
       </p>
     </div>
   );

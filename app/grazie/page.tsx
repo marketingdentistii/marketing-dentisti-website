@@ -22,6 +22,23 @@ export default function GraziePage() {
           <h2 className="text-2xl font-semibold text-slate-900 text-center mb-8">
             Nel frattempo…
           </h2>
+
+          {/* Kit Base Card — PRIMA */}
+          <div className="mb-6 bg-blue-600 border-2 border-blue-500 rounded-xl p-6 flex flex-col text-white shadow-md">
+            <div className="flex items-center justify-between mb-2">
+              <span className="inline-block bg-amber-300 text-amber-900 text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Consigliato</span>
+            </div>
+            <h3 className="text-xl font-bold mb-1">Kit Base · Template per la segreteria</h3>
+            <p className="text-blue-100 font-medium mb-1">
+              €37 con LANCIO37
+              <span className="line-through ml-2 opacity-60">€97</span>
+            </p>
+            <p className="text-blue-100 text-sm mb-6 flex-grow">
+              Il sistema operativo completo per la segreteria: template pronti per ogni contatto con il paziente. WhatsApp, email, reminder e recensioni.
+            </p>
+            <a href="/kit-base" className="block w-full text-center bg-white hover:bg-blue-50 text-blue-700 font-semibold py-3 px-4 rounded-lg transition-colors">Scopri il Kit Base</a>
+          </div>
+
           <p className="text-center text-slate-700 text-lg mb-8 max-w-2xl mx-auto">
             Vuoi che questi 7 template girino in automatico nel tuo studio, senza che tu o la segreteria debbano farci pensare?
           </p>
