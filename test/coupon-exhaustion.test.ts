@@ -2,38 +2,34 @@
 /**
  * Test isolato per verificare il comportamento della logica
  * findLancio37Coupon rispetto al coupon esaurito.
- * 
- * Simula i dati che Stripe restituirebbe in tre scenari:
+ *
+ * Simula i dati che Stripe restituisce (campi `valid` e `times_redeemed`):
  *   1. Coupon valido con redemption disponibili → restituisce l'id
- *   2. Coupon esaurito (max_redemptions raggiunto) → restituisce null
- *   3. Coupon disattivato manualmente → restituisce null
+ *   2. Coupon esaurito (times_redeemed >= max_redemptions) → restituisce null
+ *   3. Coupon non valido (valid === false, es. scaduto o disattivato) → restituisce null
  *
  * Esegui con: npx ts-node test/coupon-exhaustion.test.ts
  */
 
 type CouponLike = {
   id: string;
-  name: string;
+  name: string | null;
+  valid?: boolean;
+  max_redemptions?: number | null;
+  times_redeemed?: number;
 };
 
 /** Copia fedele della logica presente in route.ts */
 function findLancio37Coupon(coupons: CouponLike[]): { id: string } | null {
-  for (const c of coupons) {
-    if (c.name !== 'LANCIO37') continue;
+  for (const coupon of coupons) {
+    if (coupon.name !== 'LANCIO37') continue;
+    if (coupon.valid === false) continue;
 
-    const meta = c as unknown as Record<string, unknown>;
-    // Verifica che non sia stato disattivato manualmente
-    if (meta.active === false) continue;
+    const maxRedemptions = coupon.max_redemptions ?? null;
+    const timesRedeemed = coupon.times_redeemed ?? 0;
+    if (maxRedemptions !== null && timesRedeemed >= maxRedemptions) continue;
 
-    // Verifica che ci siano ancora redemption disponibili
-    const maxRed = meta.max_redemptions;
-    const timesUsed = meta.times_used;
-    // Se max_redemptions è null → uso illimitato → ok
-    if (maxRed == null) return { id: c.id };
-    // Altrimenti, times_used deve essere strettamente inferiore al massimo
-    if (typeof timesUsed === 'number' && timesUsed < (maxRed as number)) {
-      return { id: c.id };
-    }
+    return { id: coupon.id };
   }
 
   return null;
@@ -56,64 +52,76 @@ function assert(label: string, expected: { id: string } | null, actual: { id: st
   }
 }
 
-// Scenario 1: Coupon valido, max_redemptions=10, times_used=0 → deve essere trovato
+// Scenario 1: coupon valido, 0 usi su 10 → deve essere trovato (caso reale LANCIO37)
 assert(
-  'Scenario 1 — Coupon attivo, 0 usi su 10',
+  'Scenario 1 — Coupon valido, 0 usi su 10',
   { id: 'cpo_valido_1' },
-  findLancio37Coupon([{ id: 'cpo_valido_1', name: 'LANCIO37' }] as CouponLike[])
+  findLancio37Coupon([
+    { id: 'cpo_valido_1', name: 'LANCIO37', valid: true, max_redemptions: 10, times_redeemed: 0 },
+  ])
 );
 
-// Scenario 2: Coupon esaurito, max_redemptions=10, times_used=10 → deve essere NULL
+// Scenario 2: coupon esaurito, 10 usi su 10 → NULL
 assert(
   'Scenario 2 — Coupon esaurito (10/10)',
   null,
-  findLancio37Coupon([{ id: 'cpo_esaurito_1', name: 'LANCIO37', max_redemptions: 10, times_used: 10 }] as CouponLike[])
+  findLancio37Coupon([
+    { id: 'cpo_esaurito_1', name: 'LANCIO37', valid: true, max_redemptions: 10, times_redeemed: 10 },
+  ])
 );
 
-// Scenario 3: Coupon disattivato manualmente → NULL
+// Scenario 3: coupon non valido → NULL
 assert(
-  'Scenario 3 — Coupon disattivato manualmente',
+  'Scenario 3 — Coupon non valido (valid false)',
   null,
-  findLancio37Coupon([{ id: 'cpo_disabled', name: 'LANCIO37', active: false }] as CouponLike[])
+  findLancio37Coupon([
+    { id: 'cpo_disabled', name: 'LANCIO37', valid: false, max_redemptions: 10, times_redeemed: 0 },
+  ])
 );
 
-// Scenario 4: max_redemptions=null (illimitato) → trovato
+// Scenario 4: max_redemptions null (illimitato) → trovato
 assert(
   'Scenario 4 — Max redemptions null (illimitato)',
   { id: 'cpo_illimitato' },
-  findLancio37Coupon([{ id: 'cpo_illimitato', name: 'LANCIO37', max_redemptions: null }] as CouponLike[])
+  findLancio37Coupon([
+    { id: 'cpo_illimitato', name: 'LANCIO37', valid: true, max_redemptions: null, times_redeemed: 42 },
+  ])
 );
 
-// Scenario 5: times_used < max_redemptions (es. 9/10) → trovato
+// Scenario 5: quasi esaurito (9/10) → trovato
 assert(
   'Scenario 5 — Quasi esaurito (9/10)',
-  { id: 'cpo_quase' },
-  findLancio37Coupon([{ id: 'cpo_quase', name: 'LANCIO37', max_redemptions: 10, times_used: 9 }] as CouponLike[])
+  { id: 'cpo_quasi' },
+  findLancio37Coupon([
+    { id: 'cpo_quasi', name: 'LANCIO37', valid: true, max_redemptions: 10, times_redeemed: 9 },
+  ])
 );
 
-// Scenario 6: times_used >= max_redemptions (es. 10/10) → null
+// Scenario 6: superato il tetto (11/10) → NULL
 assert(
-  'Scenario 6 — Appena esaurito (10/10)',
+  'Scenario 6 — Oltre il tetto (11/10)',
   null,
-  findLancio37Coupon([{ id: 'cpo_appena', name: 'LANCIO37', max_redemptions: 10, times_used: 10 }] as CouponLike[])
+  findLancio37Coupon([
+    { id: 'cpo_oltre', name: 'LANCIO37', valid: true, max_redemptions: 10, times_redeemed: 11 },
+  ])
 );
 
-// Scenario 7: Nessun coupon LANCIO37 nel sistema → null
+// Scenario 7: nessun coupon LANCIO37 nel sistema → NULL
 assert(
   'Scenario 7 — Nessun coupon esistente',
   null,
-  findLancio37Coupon([{ id: 'altro', name: 'ALTROCOUPON' }] as CouponLike[])
+  findLancio37Coupon([{ id: 'altro', name: 'ALTROCOUPON', valid: true }])
 );
 
-// Scenario 8: Più coupon, solo LANCIO37 valido → trova quello giusto
+// Scenario 8: più coupon, solo LANCIO37 valido → trova quello giusto
 assert(
-  'Scenario 8 — Multiplo coupon, uno valido',
+  'Scenario 8 — Più coupon, uno valido',
   { id: 'cpo_lancio37' },
   findLancio37Coupon([
-    { id: 'cpo_old', name: 'VecchioSconto', max_redemptions: 10, times_used: 5 },
-    { id: 'cpo_lancio37', name: 'LANCIO37', max_redemptions: 10, times_used: 3 },
-    { id: 'cpo_expired', name: 'LANCIO37', max_redemptions: 5, times_used: 5 }, // esaurito
-  ] as CouponLike[])
+    { id: 'cpo_old', name: 'VecchioSconto', valid: true, max_redemptions: 10, times_redeemed: 5 },
+    { id: 'cpo_lancio37', name: 'LANCIO37', valid: true, max_redemptions: 10, times_redeemed: 3 },
+    { id: 'cpo_expired', name: 'LANCIO37', valid: false, max_redemptions: 5, times_redeemed: 5 },
+  ])
 );
 
 // ─── OUTPUT ─────────────────────────────────────────────
