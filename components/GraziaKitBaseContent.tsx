@@ -28,7 +28,7 @@ export default function GratiaContentInner({ sessionId }: { sessionId?: string }
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          Scarica ora i 7 moduli
+          Scarica il Kit Base
         </a>
         <p className="text-xs text-slate-400 mt-3">
           Se il download non parte, ricontrolla anche la cartella spam della tua email.
@@ -38,22 +38,26 @@ export default function GratiaContentInner({ sessionId }: { sessionId?: string }
       {/* Area Operative Recap */}
       <section className="bg-white border border-slate-200 rounded-2xl p-8 mb-12">
         <h2 className="text-xl font-bold text-slate-900 mb-6 text-center">
-          Le aree operative incluse nel Kit Base
+          Le 8 aree del Kit Base · 29 elementi
         </h2>
         <div className="grid gap-4 md:grid-cols-2">
           {[
-            'Prima chiamata e segreteria',
-            'Messaggi WhatsApp',
-            'Email al paziente',
-            'Reminder e agenda',
-            'Richiesta recensioni',
-            'Percorso del paziente',
-          ].map((area, i) => (
+            ['Segreteria', '4 elementi'],
+            ['WhatsApp', '3 elementi'],
+            ['Email al paziente', '3 elementi'],
+            ['Agenda e no-show', '4 elementi'],
+            ['Recensioni', '1 elemento'],
+            ['Social', '9 elementi'],
+            ['Percorso del paziente', '4 elementi'],
+            ['Quick-start', '1 elemento'],
+          ].map(([area, count], i) => (
             <div key={i} className="flex items-start gap-3">
               <svg className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
-              <span className="text-slate-700">{area}</span>
+              <span className="text-slate-700">
+                {area} <span className="text-slate-400 text-sm">· {count}</span>
+              </span>
             </div>
           ))}
         </div>

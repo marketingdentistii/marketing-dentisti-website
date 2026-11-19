@@ -51,21 +51,33 @@ export async function POST(req: Request) {
     timestamp: new Date().toISOString()
   });
 
-  try {
-    const webhookRes = await fetch(n8nUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: payload
-    });
+  // Inoltro al webhook n8n. Se fallisce, un solo retry e poi 502:
+  // un lead perso non deve sembrare acquisito.
+  const forward = async (): Promise<boolean> => {
+    try {
+      const res = await fetch(n8nUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload
+      });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  };
 
-    // Even if webhook fails, we redirect to thank-you page
-    // The lead will be retried by n8n's built-in retry mechanism
-    // or logged for manual review
-
-    return NextResponse.json({ success: true });
-  } catch {
-    // Network error to webhook — still redirect user to thanks
-    // Don't expose internal errors to the client
-    return NextResponse.json({ success: true });
+  let delivered = await forward();
+  if (!delivered) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    delivered = await forward();
   }
+
+  if (!delivered) {
+    return NextResponse.json(
+      { error: "Non siamo riusciti a registrare la richiesta. Riprovi tra poco." },
+      { status: 502 }
+    );
+  }
+
+  return NextResponse.json({ success: true });
 }

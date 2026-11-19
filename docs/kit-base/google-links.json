@@ -1,0 +1,110 @@
+[
+  {
+    "id": "KB04",
+    "name": "KB-04 Anagrafica paziente e consensi",
+    "fileId": "1bdhH1yrj8aidZZrqGmSvKc_CIuum7hJ4NEs89d76C70",
+    "format": "gdocs",
+    "url": "https://docs.google.com/document/d/1bdhH1yrj8aidZZrqGmSvKc_CIuum7hJ4NEs89d76C70/edit",
+    "copy": "https://docs.google.com/document/d/1bdhH1yrj8aidZZrqGmSvKc_CIuum7hJ4NEs89d76C70/copy",
+    "permStatus": 200
+  },
+  {
+    "id": "KB26",
+    "name": "KB-26 Agenda settimanale e checklist giornaliera",
+    "fileId": "188YNsLSj1JbpPv3lluBTLM961cDKumwDE_B-NyLUjEY",
+    "format": "gdocs",
+    "url": "https://docs.google.com/document/d/188YNsLSj1JbpPv3lluBTLM961cDKumwDE_B-NyLUjEY/edit",
+    "copy": "https://docs.google.com/document/d/188YNsLSj1JbpPv3lluBTLM961cDKumwDE_B-NyLUjEY/copy",
+    "permStatus": 200
+  },
+  {
+    "id": "KB29",
+    "name": "KB-29 Lista d'attesa",
+    "fileId": "1guvmAKtRuey5A84CL0fW6Z0VNeGRpUIjjn4B-hfxRBc",
+    "format": "gsheets",
+    "url": "https://docs.google.com/spreadsheets/d/1guvmAKtRuey5A84CL0fW6Z0VNeGRpUIjjn4B-hfxRBc/edit",
+    "copy": "https://docs.google.com/spreadsheets/d/1guvmAKtRuey5A84CL0fW6Z0VNeGRpUIjjn4B-hfxRBc/copy",
+    "permStatus": 200
+  },
+  {
+    "id": "KB31",
+    "name": "KB-31 Card QR per la recensione",
+    "fileId": "1cpn7nRJ0Brly7PEIE1079ScGOaY1QWcLJPnLrsIdvIA",
+    "format": "gslides",
+    "url": "https://docs.google.com/presentation/d/1cpn7nRJ0Brly7PEIE1079ScGOaY1QWcLJPnLrsIdvIA/edit",
+    "copy": "https://docs.google.com/presentation/d/1cpn7nRJ0Brly7PEIE1079ScGOaY1QWcLJPnLrsIdvIA/copy",
+    "permStatus": 200
+  },
+  {
+    "id": "KB36",
+    "name": "KB-36 Calendario dei contenuti",
+    "fileId": "14d5nxvpWNw_YEb6KMk8Fy78_zIOGM_wpyPult0nljgs",
+    "format": "gsheets",
+    "url": "https://docs.google.com/spreadsheets/d/14d5nxvpWNw_YEb6KMk8Fy78_zIOGM_wpyPult0nljgs/edit",
+    "copy": "https://docs.google.com/spreadsheets/d/14d5nxvpWNw_YEb6KMk8Fy78_zIOGM_wpyPult0nljgs/copy",
+    "permStatus": 200
+  },
+  {
+    "id": "KB37",
+    "name": "KB-37 Post pronti",
+    "fileId": "1Bn82rNYmS0_d5mhfKowXeZxX-ghnjWGEGWbE__-BFJc",
+    "format": "gslides",
+    "url": "https://docs.google.com/presentation/d/1Bn82rNYmS0_d5mhfKowXeZxX-ghnjWGEGWbE__-BFJc/edit",
+    "copy": "https://docs.google.com/presentation/d/1Bn82rNYmS0_d5mhfKowXeZxX-ghnjWGEGWbE__-BFJc/copy",
+    "permStatus": 200
+  },
+  {
+    "id": "KB38",
+    "name": "KB-38 Storie: sondaggi, quiz, Q&A e countdown",
+    "fileId": "1CRQXw5wKBfVTcRo0SFt9BHReCenxfGFxRN5IRRQuDp0",
+    "format": "gslides",
+    "url": "https://docs.google.com/presentation/d/1CRQXw5wKBfVTcRo0SFt9BHReCenxfGFxRN5IRRQuDp0/edit",
+    "copy": "https://docs.google.com/presentation/d/1CRQXw5wKBfVTcRo0SFt9BHReCenxfGFxRN5IRRQuDp0/copy",
+    "permStatus": 200
+  },
+  {
+    "id": "KB46",
+    "name": "KB-46 Grafiche di servizio",
+    "fileId": "1Mo1dwCUt3rG2sNOi8cKJ3MW5m1mF8yFBfRWZwTCM0Rw",
+    "format": "gslides",
+    "url": "https://docs.google.com/presentation/d/1Mo1dwCUt3rG2sNOi8cKJ3MW5m1mF8yFBfRWZwTCM0Rw/edit",
+    "copy": "https://docs.google.com/presentation/d/1Mo1dwCUt3rG2sNOi8cKJ3MW5m1mF8yFBfRWZwTCM0Rw/copy",
+    "permStatus": 200
+  },
+  {
+    "id": "KB50",
+    "name": "KB-50 Booklet di benvenuto",
+    "fileId": "1tXKq63IPc8MiWqUVZ5TOeSWojaDrrhxQH-ArJSuAuks",
+    "format": "gslides",
+    "url": "https://docs.google.com/presentation/d/1tXKq63IPc8MiWqUVZ5TOeSWojaDrrhxQH-ArJSuAuks/edit",
+    "copy": "https://docs.google.com/presentation/d/1tXKq63IPc8MiWqUVZ5TOeSWojaDrrhxQH-ArJSuAuks/copy",
+    "permStatus": 200
+  },
+  {
+    "id": "KB51",
+    "name": "KB-51 Istruzioni post-trattamento",
+    "fileId": "1kWkLbuv57A_0J65qbZ0EoJp31Wv-FrV1OIX23b5XwRg",
+    "format": "gdocs",
+    "url": "https://docs.google.com/document/d/1kWkLbuv57A_0J65qbZ0EoJp31Wv-FrV1OIX23b5XwRg/edit",
+    "copy": "https://docs.google.com/document/d/1kWkLbuv57A_0J65qbZ0EoJp31Wv-FrV1OIX23b5XwRg/copy",
+    "permStatus": 200
+  },
+  {
+    "id": "KB55",
+    "name": "KB-55 Bambini: scheda da colorare e attestato",
+    "fileId": "1zc9gm5hxjiljMWssyORbrWM957af-3lwf_AOhRtewfw",
+    "format": "gslides",
+    "url": "https://docs.google.com/presentation/d/1zc9gm5hxjiljMWssyORbrWM957af-3lwf_AOhRtewfw/edit",
+    "copy": "https://docs.google.com/presentation/d/1zc9gm5hxjiljMWssyORbrWM957af-3lwf_AOhRtewfw/copy",
+    "permStatus": 200
+  },
+  {
+    "id": "KB61",
+    "name": "KB-61 Copertine highlights",
+    "fileId": "1C-iGN-l3ihW4RkDAe_-0u_kwddBCOOSCCwacpPdkKjU",
+    "format": "gslides",
+    "url": "https://docs.google.com/presentation/d/1C-iGN-l3ihW4RkDAe_-0u_kwddBCOOSCCwacpPdkKjU/edit",
+    "copy": "https://docs.google.com/presentation/d/1C-iGN-l3ihW4RkDAe_-0u_kwddBCOOSCCwacpPdkKjU/copy",
+    "permStatus": 200
+  }
+]

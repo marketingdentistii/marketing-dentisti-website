@@ -1,0 +1,12 @@
+{
+  "name": "kit-base-build",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Build del PDF master Kit Base. Non entra nel build di Next.js.",
+  "dependencies": {
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.5.438",
+    "puppeteer-core": "^23.11.1"
+  }
+}

@@ -1,0 +1,312 @@
+{
+  "generatedAt": "2026-11-19T16:08:27.276Z",
+  "totalPages": 91,
+  "includeGoogle": false,
+  "indexPages": 2,
+  "sections": [
+    {
+      "id": "KB06",
+      "title": "Paziente difficile: cinque scenari",
+      "format": "text",
+      "size": "A4",
+      "pages": 7,
+      "startPage": 4,
+      "endPage": 10,
+      "words": 1950,
+      "noteBox": null,
+      "footerLine": null
+    },
+    {
+      "id": "KB07",
+      "title": "Presentazione del preventivo",
+      "format": "text",
+      "size": "A4",
+      "pages": 6,
+      "startPage": 11,
+      "endPage": 16,
+      "words": 2467,
+      "noteBox": null,
+      "footerLine": null
+    },
+    {
+      "id": "KB08",
+      "title": "Recall pazienti dormienti",
+      "format": "text",
+      "size": "A4",
+      "pages": 3,
+      "startPage": 17,
+      "endPage": 19,
+      "words": 765,
+      "noteBox": null,
+      "footerLine": null
+    },
+    {
+      "id": "KB11",
+      "title": "Guida al setup di WhatsApp Business",
+      "format": "print",
+      "size": "A4",
+      "pages": 15,
+      "startPage": 20,
+      "endPage": 34,
+      "words": 3358,
+      "noteBox": "avvio",
+      "footerLine": null
+    },
+    {
+      "id": "KB12",
+      "title": "Recupero del paziente che non si è presentato",
+      "format": "text",
+      "size": "A4",
+      "pages": 3,
+      "startPage": 35,
+      "endPage": 37,
+      "words": 972,
+      "noteBox": null,
+      "footerLine": null
+    },
+    {
+      "id": "KB15",
+      "title": "Follow-up del preventivo su WhatsApp",
+      "format": "text",
+      "size": "A4",
+      "pages": 2,
+      "startPage": 38,
+      "endPage": 39,
+      "words": 592,
+      "noteBox": null,
+      "footerLine": null
+    },
+    {
+      "id": "KB17",
+      "title": "Benvenuto dopo la visita",
+      "format": "text",
+      "size": "A4",
+      "pages": 4,
+      "startPage": 40,
+      "endPage": 43,
+      "words": 1331,
+      "noteBox": null,
+      "footerLine": null
+    },
+    {
+      "id": "KB20",
+      "title": "Follow-up del preventivo via email",
+      "format": "text",
+      "size": "A4",
+      "pages": 4,
+      "startPage": 44,
+      "endPage": 47,
+      "words": 1236,
+      "noteBox": null,
+      "footerLine": null
+    },
+    {
+      "id": "KB23",
+      "title": "Cosa portare alla prima visita",
+      "format": "text",
+      "size": "A4",
+      "pages": 2,
+      "startPage": 48,
+      "endPage": 49,
+      "words": 433,
+      "noteBox": null,
+      "footerLine": null
+    },
+    {
+      "id": "KB25",
+      "title": "Protocollo anti-no-show",
+      "format": "print",
+      "size": "A4",
+      "pages": 10,
+      "startPage": 50,
+      "endPage": 59,
+      "words": 2803,
+      "noteBox": "avvio",
+      "footerLine": null
+    },
+    {
+      "id": "KB27",
+      "title": "Flowchart: prevenire e recuperare",
+      "format": "print",
+      "size": "A4",
+      "pages": 2,
+      "startPage": 60,
+      "endPage": 61,
+      "words": 444,
+      "noteBox": null,
+      "footerLine": null
+    },
+    {
+      "id": "KB40",
+      "title": "Reel e TikTok: dieci script",
+      "format": "text",
+      "size": "A4",
+      "pages": 7,
+      "startPage": 62,
+      "endPage": 68,
+      "words": 2017,
+      "noteBox": null,
+      "footerLine": null
+    },
+    {
+      "id": "KB43",
+      "title": "Bio e profilo",
+      "format": "text",
+      "size": "A4",
+      "pages": 3,
+      "startPage": 69,
+      "endPage": 71,
+      "words": 517,
+      "noteBox": null,
+      "footerLine": null
+    },
+    {
+      "id": "KB45",
+      "title": "FAQ dei pazienti, trasformate in post",
+      "format": "text",
+      "size": "A4",
+      "pages": 5,
+      "startPage": 72,
+      "endPage": 76,
+      "words": 2290,
+      "noteBox": null,
+      "footerLine": null
+    },
+    {
+      "id": "KB47",
+      "title": "Foto, video e repost: consenso e uso",
+      "format": "print",
+      "size": "A4",
+      "pages": 8,
+      "startPage": 77,
+      "endPage": 84,
+      "words": 1551,
+      "noteBox": null,
+      "footerLine": null
+    },
+    {
+      "id": "KB49",
+      "title": "Mappa del percorso del paziente",
+      "format": "print",
+      "size": "A4",
+      "pages": 2,
+      "startPage": 85,
+      "endPage": 86,
+      "words": 735,
+      "noteBox": null,
+      "footerLine": null
+    },
+    {
+      "id": "KB57",
+      "title": "Quick-start: partire in una settimana",
+      "format": "print",
+      "size": "A4",
+      "pages": 5,
+      "startPage": 87,
+      "endPage": 91,
+      "words": 1153,
+      "noteBox": null,
+      "footerLine": null
+    }
+  ],
+  "googleElements": [
+    {
+      "id": "KB04",
+      "title": "Anagrafica paziente e consensi",
+      "format": "gdocs",
+      "words": 541,
+      "noteBox": null,
+      "footerLine": "setup"
+    },
+    {
+      "id": "KB26",
+      "title": "Agenda settimanale e checklist giornaliera",
+      "format": "gdocs",
+      "words": 968,
+      "noteBox": null,
+      "footerLine": "setup"
+    },
+    {
+      "id": "KB29",
+      "title": "Lista d'attesa",
+      "format": "gsheets",
+      "words": 550,
+      "noteBox": null,
+      "footerLine": "setup"
+    },
+    {
+      "id": "KB31",
+      "title": "Card QR per la recensione",
+      "format": "gslides",
+      "words": 145,
+      "noteBox": null,
+      "footerLine": "setup"
+    },
+    {
+      "id": "KB36",
+      "title": "Calendario dei contenuti",
+      "format": "gsheets",
+      "words": 2707,
+      "noteBox": "gestione",
+      "footerLine": "contenuti"
+    },
+    {
+      "id": "KB37",
+      "title": "Post pronti",
+      "format": "gslides",
+      "words": 1073,
+      "noteBox": null,
+      "footerLine": "contenuti"
+    },
+    {
+      "id": "KB38",
+      "title": "Storie: sondaggi, quiz, Q&A e countdown",
+      "format": "gslides",
+      "words": 186,
+      "noteBox": null,
+      "footerLine": "contenuti"
+    },
+    {
+      "id": "KB46",
+      "title": "Grafiche di servizio",
+      "format": "gslides",
+      "words": 313,
+      "noteBox": null,
+      "footerLine": "contenuti"
+    },
+    {
+      "id": "KB61",
+      "title": "Copertine highlights",
+      "format": "gslides",
+      "words": 6,
+      "noteBox": null,
+      "footerLine": "contenuti"
+    },
+    {
+      "id": "KB50",
+      "title": "Booklet di benvenuto",
+      "format": "gslides",
+      "words": 536,
+      "noteBox": "avvio",
+      "footerLine": "setup"
+    },
+    {
+      "id": "KB51",
+      "title": "Istruzioni post-trattamento",
+      "format": "gdocs",
+      "words": 1601,
+      "noteBox": null,
+      "footerLine": "contenuti"
+    },
+    {
+      "id": "KB55",
+      "title": "Bambini: scheda da colorare e attestato",
+      "format": "gslides",
+      "words": 67,
+      "noteBox": null,
+      "footerLine": "contenuti"
+    }
+  ],
+  "noteBoxCount": 4,
+  "footerLineCount": 12
+}

@@ -1,5 +1,6 @@
 # dependencies
 /node_modules
+tools/kit-base/node_modules
 /.pnp
 .pnp.js
 

@@ -116,41 +116,51 @@ export default function KitBasePage() {
             Cosa trovi dentro il Kit Base
           </h2>
           <p className="text-slate-600 text-center max-w-2xl mx-auto mb-12">
-            Template operativi divisi per aree. Non sono moduli tecnici: sono testi,
-            sequenze e strutture pronte da personalizzare con il nome del tuo studio.
+            29 elementi in 8 aree operative: testi, sequenze, protocolli stampabili e file
+            Google pronti da personalizzare con il nome del suo studio.
           </p>
 
           <div className="space-y-6">
             {[
               {
                 icon: '📋',
-                title: 'Prima chiamata e segreteria',
-                desc: 'Copione telefonico per accogliere chi chiama per la prima volta. Include domande chiave, tono e follow-up.'
+                title: 'Segreteria — 4 elementi',
+                desc: 'Anagrafica e consensi distinti, gestione del paziente difficile in cinque scenari, presentazione del preventivo, recall dei pazienti dormienti.'
               },
               {
                 icon: '💬',
-                title: 'Messaggi WhatsApp',
-                desc: 'Sequenza WhatsApp per messaggio di benvenuto, reminder e seguito post-visita. Pronto per essere adattato.'
+                title: 'WhatsApp — 3 elementi',
+                desc: 'Guida al setup di WhatsApp Business, recupero del paziente che non si è presentato, follow-up del preventivo coordinato con le email.'
               },
               {
                 icon: '✉️',
-                title: 'Email al paziente',
-                desc: 'Template email per appuntamento, conferma e richiesta feedback. Tono professionale, niente spam.'
+                title: 'Email al paziente — 3 elementi',
+                desc: 'Benvenuto post-visita in tre varianti, follow-up del preventivo in tre email, cosa portare alla prima visita.'
               },
               {
                 icon: '📅',
-                title: 'Reminder e agenda',
-                desc: 'Struttura di reminder pre-appuntamento per ridurre i no-show. Integrabile con SMS o WhatsApp.'
+                title: 'Agenda e no-show — 4 elementi',
+                desc: 'Protocollo di prevenzione a 48/24/2 ore, agenda settimanale con checklist, flowchart decisionale, lista d\'attesa con formule.'
               },
               {
                 icon: '⭐',
-                title: 'Richiesta recensioni',
-                desc: 'Sequenza per chiedere recensioni Google dopo la visita. Timing corretto, testo naturale, zero invadenza.'
+                title: 'Recensioni — 1 elemento',
+                desc: 'Card QR da stampare ed esporre, con la guida per creare il suo QR e collegarlo alle recensioni Google.'
+              },
+              {
+                icon: '📱',
+                title: 'Social — 9 elementi',
+                desc: 'Calendario di 30 giorni con banca idee, 20 post, 10 storie, 6 copertine highlights, 10 grafiche di servizio, script reel, bio, FAQ trasformate in post, foto e consensi.'
               },
               {
                 icon: '🗺️',
-                title: 'Percorso del paziente',
-                desc: "Mappa completa dei touchpoint dalla prima chiamata alla recensione. Per avere visione d'insieme."
+                title: 'Percorso del paziente — 4 elementi',
+                desc: 'Mappa dei cinque step con i moduli collegati, booklet di benvenuto, istruzioni post-trattamento da validare col clinico, scheda e attestato per i bambini.'
+              },
+              {
+                icon: '🚀',
+                title: 'Quick-start — 1 elemento',
+                desc: 'Ordine di implementazione, checklist dei primi sette giorni, come sostituire i token e condividere i file con la segreteria.'
               },
             ].map((area, i) => (
               <div key={i} className="flex gap-4 items-start">
