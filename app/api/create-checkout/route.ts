@@ -5,28 +5,28 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 /**
  * Legge il coupon LANCIO37 esistente su Stripe e verifica che sia ancora applicabile.
- * Restituisce null se il coupon non esiste, è esaurito o disattivato.
+ * Restituisce { id } se il coupon esiste, è valido e ha ancora redemption disponibili,
+ * altrimenti null (il checkout esce a prezzo pieno, senza errori).
+ *
+ * Campi Stripe attuali: `valid` (sostituisce `active`, deprecato e non più restituito)
+ * e `times_redeemed` (il vecchio `times_used` non esiste). `max_redemptions` è null
+ * quando il coupon non ha un tetto di utilizzi.
  */
 async function findLancio37Coupon(): Promise<{ id: string } | null> {
   const coupons = await stripe.coupons.list({ limit: 100 });
 
-  for (const c of coupons.data) {
-    // Cerca il coupon per nome
-    if (c.name !== 'LANCIO37') continue;
+  for (const coupon of coupons.data) {
+    // Il coupon si chiama LANCIO37 ma il suo id è generato da Stripe: va cercato per nome.
+    if (coupon.name !== 'LANCIO37') continue;
 
-    const meta = c as unknown as Record<string, unknown>;
-    // Verifica che non sia stato disattivato manualmente
-    if (meta.active === false) continue;
+    // valid === false quando il coupon è scaduto, cancellato o disattivato a mano
+    if (coupon.valid === false) continue;
 
-    // Verifica che ci siano ancora redemption disponibili
-    const maxRed = meta.max_redemptions;
-    const timesUsed = meta.times_used;
-    // Se max_redemptions è null → uso illimitato → ok
-    if (maxRed == null) return { id: c.id };
-    // Altrimenti, times_used deve essere strettamente inferiore al massimo
-    if (typeof timesUsed === 'number' && timesUsed < (maxRed as number)) {
-      return { id: c.id };
-    }
+    // Con tetto di utilizzi raggiunto il coupon è esaurito
+    const maxRedemptions = coupon.max_redemptions;
+    if (maxRedemptions !== null && coupon.times_redeemed >= maxRedemptions) continue;
+
+    return { id: coupon.id };
   }
 
   return null;
@@ -46,8 +46,8 @@ export async function POST(request: NextRequest) {
       line_items: [
         { price: 'price_1Ucuk61cfqUaCrbBkWsXmIx5', quantity: 1 },
       ],
-      // Lo sconto è già applicato automaticamente quando il coupon esiste e ha redemption disponibili.
-      // Se esaurito (10 vendite finite) o cancellato, discounts=[] → checkout €97 senza errori.
+      // Lo sconto è applicato quando il coupon esiste, è valido e ha redemption disponibili.
+      // Se esaurito (10 usi), scaduto o cancellato, discounts=[] → checkout €97 senza errori.
       discounts: coupon ? [{ coupon: coupon.id }] : [],
       billing_address_collection: 'auto',
       success_url: `${origin}/grazie-kit-base?session_id={CHECKOUT_SESSION_ID}`,
