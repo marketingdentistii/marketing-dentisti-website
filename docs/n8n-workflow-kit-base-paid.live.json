@@ -1,0 +1,646 @@
+{
+  "name": "Kit Base - Consegna Pagata",
+  "nodes": [
+    {
+      "id": "85f7f7eb-cbfa-43e6-8bb5-e3ab9d2e5eca",
+      "name": "Webhook Stripe",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        192
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "stripe-kit-base-paid",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "webhookId": "6bc7c9ab-11dc-4de6-a0fa-ee6a92260c64"
+    },
+    {
+      "id": "b50518b2-ed3e-405f-b7e4-7c3fed6640a6",
+      "name": "Verifica firma e prepara dati",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        192
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "\nconst item = $input.all()[0];\nconst crypto = require('crypto');\nconst SECRET = '[REDACTED]';\nconst b = item.binary && item.binary.data && item.binary.data.data;\nconst rawBody = b ? Buffer.from(b, 'base64').toString('utf8') : '';\nconst headers = item.json.headers || {};\nconst sig = headers['stripe-signature'] || headers['Stripe-Signature'] || '';\nconst event = (item.json.body && typeof item.json.body === 'object') ? item.json.body : null;\nlet ts = '';\nconst v1s = [];\nfor (const part of sig.split(',')) {\n  const idx = part.indexOf('=');\n  if (idx < 1) continue;\n  const k = part.substring(0, idx).trim();\n  const v = part.substring(idx + 1).trim();\n  if (k === 't') ts = v;\n  if (k === 'v1') v1s.push(v);\n}\nlet ok = false;\nif (rawBody && ts && v1s.length > 0) {\n  const computed = crypto.createHmac('sha256', SECRET).update(ts + '.' + rawBody).digest('hex');\n  const a = Buffer.from(computed, 'utf8');\n  for (const v1 of v1s) {\n    const bb = Buffer.from(v1, 'utf8');\n    if (a.length === bb.length && crypto.timingSafeEqual(a, bb)) { ok = true; break; }\n  }\n}\nif (!ok) return [{ json: { _route: 'reject', reason: 'invalid_signature' } }];\nif (!event || event.type !== 'checkout.session.completed') return [{ json: { _route: 'ignored', reason: 'event_type' } }];\nconst s = (event.data && event.data.object) || {};\nconst pt = s.metadata && s.metadata.product_type;\nconst PRICE_ID = 'price_1Ucuk61cfqUaCrbBkWsXmIx5';\nlet priceOk = false;\nconst li = s.line_items && s.line_items.data;\nif (Array.isArray(li)) {\n  for (const it of li) {\n    const p = it.price;\n    const pid = (typeof p === 'string') ? p : (p && p.id);\n    if (pid === PRICE_ID) { priceOk = true; break; }\n  }\n}\nif (pt !== 'kit_base' && !priceOk) return [{ json: { _route: 'ignored', reason: 'product_type' } }];\nlet coupon = '';\nconst d = (s.discounts && s.discounts[0]) || null;\nif (d) {\n  const cp = d.coupon;\n  if (typeof cp === 'string') coupon = cp;\n  else if (cp && typeof cp === 'object') coupon = cp.name || cp.id || '';\n}\nconst cents = (s.amount_total != null ? s.amount_total : (s.amount_received != null ? s.amount_received : 0));\nreturn [{ json: {\n  _route: 'process',\n  timestamp: new Date().toISOString(),\n  event_id: event.id || '',\n  session_id: s.id || '',\n  customer_email: s.customer_email || (s.customer_details && s.customer_details.email) || '',\n  customer_name: s.customer_name || (s.customer_details && s.customer_details.name) || '',\n  amount: Math.round((Number(cents) || 0) / 100),\n  currency: s.currency || 'eur',\n  coupon: coupon,\n  payment_status: s.payment_status || ''\n} }];\n"
+      }
+    },
+    {
+      "id": "1fb5090a-39e3-491d-a7a1-09d40ec0ace9",
+      "name": "Routing",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        448,
+        176
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "outputKey": "reject",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json._route }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "reject"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "ignored",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json._route }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "ignored"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Processa"
+        }
+      }
+    },
+    {
+      "id": "a56efc8f-6d2f-491c-af79-e6f0a248db0b",
+      "name": "Risposta 401",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        672,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"received\": false, \"error\": \"invalid signature\" }",
+        "options": {
+          "responseCode": 401
+        }
+      }
+    },
+    {
+      "id": "c33d9961-0970-48e9-b05a-bfa1762e77a9",
+      "name": "Risposta 200 ignorato",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        672,
+        192
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"received\": true, \"ignored\": true }",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    },
+    {
+      "id": "d3e60e05-5af8-4724-be77-2cf3e1b6720b",
+      "name": "Evento gia processato",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        384
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "cRRbRnmUARLG1SuE"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "event_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.event_id }}"
+            }
+          ]
+        },
+        "returnAll": false
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "efac9993-e2c8-465d-80c1-a9de5805fba0",
+      "name": "Valuta duplicato",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        384
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "\nconst row = $input.all()[0].json;\nconst data = $('Verifica firma e prepara dati').first().json;\nconst dup = !!(row && row.event_id);\nreturn [{ json: Object.assign({ _duplicate: dup }, data) }];\n"
+      }
+    },
+    {
+      "id": "43c443de-7139-42a0-a814-0769f94cb927",
+      "name": "Duplicato",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        384
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json._duplicate }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "df3940fd-2343-43af-9338-d5917e98841b",
+      "name": "Risposta 200 duplicato",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1344,
+        288
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"received\": true, \"duplicate\": true }",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    },
+    {
+      "id": "8015220f-4458-4d8a-ab46-7234bc2f21fe",
+      "name": "Salva acquisto su Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1344,
+        480
+      ],
+      "parameters": {
+        "resource": "sheet",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1C2_RBMyQGNHGUhdQFpphPZwfHl-CveHx_OAuwmKNMDk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Acquisti_KitBase"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $('Verifica firma e prepara dati').first().json.timestamp }}",
+            "event_id": "={{ $('Verifica firma e prepara dati').first().json.event_id }}",
+            "session_id": "={{ $('Verifica firma e prepara dati').first().json.session_id }}",
+            "customer_email": "={{ $('Verifica firma e prepara dati').first().json.customer_email }}",
+            "customer_name": "={{ $('Verifica firma e prepara dati').first().json.customer_name }}",
+            "amount": "={{ $('Verifica firma e prepara dati').first().json.amount }}",
+            "currency": "={{ $('Verifica firma e prepara dati').first().json.currency }}",
+            "coupon": "={{ $('Verifica firma e prepara dati').first().json.coupon }}",
+            "payment_status": "={{ $('Verifica firma e prepara dati').first().json.payment_status }}"
+          },
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "customer_email",
+              "displayName": "customer_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "customer_name",
+              "displayName": "customer_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "amount",
+              "displayName": "amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "currency",
+              "displayName": "currency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "coupon",
+              "displayName": "coupon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "payment_status",
+              "displayName": "payment_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "matchingColumns": [
+            "event_id"
+          ]
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wUXqLtdQJ2NZxUwo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "id": "bcb10050-e703-4382-8389-f9a8d4476071",
+      "name": "Segna evento processato",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1568,
+        480
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "cRRbRnmUARLG1SuE"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "event_id": "={{ $('Verifica firma e prepara dati').first().json.event_id }}",
+            "processed_at": "={{ $('Verifica firma e prepara dati').first().json.timestamp }}"
+          },
+          "schema": [
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "processed_at",
+              "displayName": "processed_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "d8e24b98-91ce-4177-9bb3-32f364e8fea7",
+      "name": "Invia Kit Base via email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1792,
+        480
+      ],
+      "parameters": {
+        "resource": "email",
+        "operation": "send",
+        "fromEmail": "marketingdentisti.it@gmail.com",
+        "toEmail": "={{ $('Verifica firma e prepara dati').first().json.customer_email }}",
+        "subject": "Il tuo Kit Base è pronto",
+        "emailFormat": "text",
+        "text": "=Gentile {{ $('Verifica firma e prepara dati').first().json.customer_name || 'cliente' }},\n\ngrazie per aver acquistato il Kit Base.\n\nIl kit è pronto. Scarica i template qui:\nhttps://marketing-dentisti.it/api/pdf/kit-base\n\nDentro trova i messaggi pronti per la segreteria: WhatsApp di benvenuto, reminder prima dell'appuntamento, conferme, richiesta recensione e i follow-up dopo la visita.\n\nSe qualcosa non funziona o ha domande, risponda a questa email.\n\nMarketing dentisti",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "onError": "continueErrorOutput",
+      "webhookId": "bba7d8f2-6563-4d59-8ace-1d07747ed119",
+      "credentials": {
+        "smtp": {
+          "id": "qLh66XECemx8Ce4g",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "id": "af468fb3-afda-4eab-a915-b520a9e1aa8d",
+      "name": "Risposta 200 OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2240,
+        480
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"received\": true, \"duplicate\": false, \"delivered\": true }",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    },
+    {
+      "id": "7f30d3de-826c-4bdf-a1b1-bbc1add90cf0",
+      "name": "Alert errore consegna",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        2016,
+        560
+      ],
+      "parameters": {
+        "resource": "email",
+        "operation": "send",
+        "fromEmail": "marketingdentisti.it@gmail.com",
+        "toEmail": "marketingdentisti.it@gmail.com",
+        "subject": "Kit Base - errore consegna",
+        "emailFormat": "text",
+        "text": "=Errore nella consegna del Kit Base.\n\nsession_id: {{ $('Verifica firma e prepara dati').first().json.session_id }}\nevent_id: {{ $('Verifica firma e prepara dati').first().json.event_id }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "webhookId": "a6955bba-a5c8-4004-8464-699a15de9fdf",
+      "credentials": {
+        "smtp": {
+          "id": "qLh66XECemx8Ce4g",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "id": "86fc8e46-cb50-4010-b1ea-46cda5a4f76a",
+      "name": "Risposta 500 consegna",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1400,
+        620
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"received\": true, \"delivered\": false, \"error\": \"delivery_failed\" }",
+        "options": {
+          "responseCode": 500
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Stripe": {
+      "main": [
+        [
+          {
+            "node": "Verifica firma e prepara dati",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verifica firma e prepara dati": {
+      "main": [
+        [
+          {
+            "node": "Routing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Routing": {
+      "main": [
+        [
+          {
+            "node": "Risposta 401",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Risposta 200 ignorato",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Evento gia processato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evento gia processato": {
+      "main": [
+        [
+          {
+            "node": "Valuta duplicato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valuta duplicato": {
+      "main": [
+        [
+          {
+            "node": "Duplicato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Duplicato": {
+      "main": [
+        [
+          {
+            "node": "Risposta 200 duplicato",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Salva acquisto su Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Invia Kit Base via email": {
+      "main": [
+        [
+          {
+            "node": "Segna evento processato",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alert errore consegna",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salva acquisto su Google Sheet": {
+      "main": [
+        [
+          {
+            "node": "Invia Kit Base via email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Segna evento processato": {
+      "main": [
+        [
+          {
+            "node": "Risposta 200 OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert errore consegna": {
+      "main": [
+        [
+          {
+            "node": "Risposta 500 consegna",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "active": true,
+  "versionId": "7bae268f-b33c-4337-8659-94f4817347cd",
+  "id": "dokBr1a0EM7ubEoO",
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "tags": []
+}
